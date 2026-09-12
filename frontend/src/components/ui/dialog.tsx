@@ -28,7 +28,11 @@ export const DialogContent = forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed left-1/2 top-1/2 z-50 grid w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 border border-border bg-card p-4 sm:p-6 shadow-lg rounded-lg animate-slide-in max-h-[90vh] overflow-y-auto',
+        // grid-cols-1 (not bare `grid`) is required here: Tailwind's grid-cols-N utilities set
+        // each track to `minmax(0, 1fr)`, which is what lets a wide child (e.g. a table) shrink
+        // and scroll internally via its own overflow-x instead of blowing out this dialog's
+        // max-width (a grid item's default automatic minimum size is its content's min-content).
+        'fixed left-1/2 top-1/2 z-50 grid grid-cols-1 w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 border border-border bg-card p-4 sm:p-6 shadow-lg rounded-lg animate-slide-in max-h-[90vh] overflow-y-auto',
         size === 'sm' && 'max-w-sm',
         size === 'md' && 'max-w-lg',
         size === 'lg' && 'max-w-2xl',

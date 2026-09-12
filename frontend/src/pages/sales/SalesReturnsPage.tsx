@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
-import { Plus, RotateCcw } from 'lucide-react';
+import { Plus, RotateCcw, PackageCheck, PackageX } from 'lucide-react';
 import { salesApi, salesReturnsApi } from '@/api/sales';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
@@ -111,7 +111,7 @@ export function SalesReturnsPage() {
                     <TableCell className="font-mono text-xs">{r.returnNumber}</TableCell>
                     <TableCell className="text-muted-foreground">{r.sale.invoiceNumber}</TableCell>
                     <TableCell className="font-medium">{r.customer?.name ?? 'Walk-in'}</TableCell>
-                    <TableCell>{formatCurrency(r.refundTotal)}</TableCell>
+                    <TableCell className="tabular-nums">{formatCurrency(r.refundTotal)}</TableCell>
                     <TableCell className="text-muted-foreground">{formatDate(r.createdAt)}</TableCell>
                   </TableRow>
                 ))}
@@ -138,65 +138,86 @@ export function SalesReturnsPage() {
             </Field>
 
             {sale && (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-8" />
-                    <TableHead>Product</TableHead>
-                    <TableHead>Sold qty</TableHead>
-                    <TableHead>Return qty</TableHead>
-                    <TableHead>Reason</TableHead>
-                    <TableHead>Restock?</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sale.items.map((item: any) => (
-                    <TableRow key={item.id}>
-                      <TableCell>
-                        <Checkbox
-                          checked={returnItems[item.productId]?.checked ?? false}
-                          onCheckedChange={(v) =>
-                            setReturnItems((prev) => ({ ...prev, [item.productId]: { ...prev[item.productId], checked: !!v } }))
-                          }
-                        />
-                      </TableCell>
-                      <TableCell className="font-medium">{item.product.name}</TableCell>
-                      <TableCell>{item.quantity}</TableCell>
-                      <TableCell>
-                        <Input
-                          type="number" min={1} max={item.quantity} className="w-20"
-                          value={returnItems[item.productId]?.quantity ?? item.quantity}
-                          onChange={(e) =>
-                            setReturnItems((prev) => ({
-                              ...prev,
-                              [item.productId]: { ...prev[item.productId], quantity: parseInt(e.target.value, 10) || 0 },
-                            }))
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Select
-                          value={returnItems[item.productId]?.reason ?? 'CUSTOMER_CHANGE_OF_MIND'}
-                          onValueChange={(v) => setReturnItems((prev) => ({ ...prev, [item.productId]: { ...prev[item.productId], reason: v } }))}
-                        >
-                          <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            {REASONS.map((r) => <SelectItem key={r} value={r}>{r.replace(/_/g, ' ')}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell>
-                        <Checkbox
-                          checked={returnItems[item.productId]?.restock ?? true}
-                          onCheckedChange={(v) =>
-                            setReturnItems((prev) => ({ ...prev, [item.productId]: { ...prev[item.productId], restock: !!v } }))
-                          }
-                        />
-                      </TableCell>
+              <>
+                <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-muted/50 px-3 py-2 text-sm">
+                  <div>
+                    <span className="font-medium">{sale.invoiceNumber}</span>
+                    <span className="text-muted-foreground"> · {sale.customer?.name ?? 'Walk-in customer'} · {formatDate(sale.createdAt)}</span>
+                  </div>
+                  <span className="tabular-nums font-medium">{formatCurrency(sale.total)} original sale</span>
+                </div>
+
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-8" />
+                      <TableHead>Product</TableHead>
+                      <TableHead>Sold qty</TableHead>
+                      <TableHead>Return qty</TableHead>
+                      <TableHead>Reason</TableHead>
+                      <TableHead>Inventory effect</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {sale.items.map((item: any) => {
+                      const rowState = returnItems[item.productId];
+                      const restock = rowState?.restock ?? true;
+                      return (
+                        <TableRow key={item.id}>
+                          <TableCell>
+                            <Checkbox
+                              checked={rowState?.checked ?? false}
+                              onCheckedChange={(v) =>
+                                setReturnItems((prev) => ({ ...prev, [item.productId]: { ...prev[item.productId], checked: !!v } }))
+                              }
+                            />
+                          </TableCell>
+                          <TableCell className="font-medium">{item.product.name}</TableCell>
+                          <TableCell className="tabular-nums text-muted-foreground">{item.quantity}</TableCell>
+                          <TableCell>
+                            <Input
+                              type="number" min={1} max={item.quantity} className="w-20"
+                              value={rowState?.quantity ?? item.quantity}
+                              onChange={(e) =>
+                                setReturnItems((prev) => ({
+                                  ...prev,
+                                  [item.productId]: { ...prev[item.productId], quantity: parseInt(e.target.value, 10) || 0 },
+                                }))
+                              }
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Select
+                              value={rowState?.reason ?? 'CUSTOMER_CHANGE_OF_MIND'}
+                              onValueChange={(v) => setReturnItems((prev) => ({ ...prev, [item.productId]: { ...prev[item.productId], reason: v } }))}
+                            >
+                              <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {REASONS.map((r) => <SelectItem key={r} value={r}>{r.replace(/_/g, ' ')}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                          <TableCell>
+                            <label className="flex items-center gap-1.5 text-sm">
+                              <Checkbox
+                                checked={restock}
+                                onCheckedChange={(v) =>
+                                  setReturnItems((prev) => ({ ...prev, [item.productId]: { ...prev[item.productId], restock: !!v } }))
+                                }
+                              />
+                              {restock ? (
+                                <span className="flex items-center gap-1 text-success"><PackageCheck className="h-3.5 w-3.5" /> Restock</span>
+                              ) : (
+                                <span className="flex items-center gap-1 text-muted-foreground"><PackageX className="h-3.5 w-3.5" /> Discard</span>
+                              )}
+                            </label>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </>
             )}
 
             <Field label="Notes"><Textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} /></Field>

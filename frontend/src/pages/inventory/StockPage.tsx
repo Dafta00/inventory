@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Boxes, ArrowLeftRight, SlidersHorizontal } from 'lucide-react';
+import { Boxes, ArrowLeftRight, SlidersHorizontal, AlertTriangle, XCircle, CheckCircle2 } from 'lucide-react';
 import { inventoryApi } from '@/api/inventory';
 import { warehousesApi } from '@/api/warehouses';
 import { PageHeader } from '@/components/page-header';
@@ -22,8 +23,9 @@ import { TransferStockDialog } from './TransferStockDialog';
 export function StockPage() {
   const { hasPermission } = useAuth();
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
   const [warehouseId, setWarehouseId] = useState<string>('all');
-  const [lowStockOnly, setLowStockOnly] = useState(false);
+  const [lowStockOnly, setLowStockOnly] = useState(() => searchParams.get('lowStockOnly') === '1');
   const [adjustOpen, setAdjustOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
 
@@ -96,16 +98,16 @@ export function StockPage() {
                   <TableCell className="font-medium">{row.product.name}</TableCell>
                   <TableCell className="font-mono text-xs">{row.product.sku}</TableCell>
                   <TableCell>{row.warehouse.name}</TableCell>
-                  <TableCell>{formatNumber(row.quantity)} {row.product.unit}</TableCell>
-                  <TableCell>{formatNumber(row.reserved)}</TableCell>
-                  <TableCell className="text-muted-foreground">{row.product.reorderLevel}</TableCell>
+                  <TableCell className="tabular-nums">{formatNumber(row.quantity)} {row.product.unit}</TableCell>
+                  <TableCell className="tabular-nums">{formatNumber(row.reserved)}</TableCell>
+                  <TableCell className="tabular-nums text-muted-foreground">{row.product.reorderLevel}</TableCell>
                   <TableCell>
                     {row.isOutOfStock ? (
-                      <Badge variant="destructive">Out of stock</Badge>
+                      <Badge variant="destructive"><XCircle className="h-3 w-3" /> Out of stock</Badge>
                     ) : row.isLowStock ? (
-                      <Badge variant="warning">Low stock</Badge>
+                      <Badge variant="warning"><AlertTriangle className="h-3 w-3" /> Low stock</Badge>
                     ) : (
-                      <Badge variant="success">OK</Badge>
+                      <Badge variant="success"><CheckCircle2 className="h-3 w-3" /> Healthy</Badge>
                     )}
                   </TableCell>
                 </TableRow>

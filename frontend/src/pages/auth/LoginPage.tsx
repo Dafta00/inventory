@@ -3,12 +3,13 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Boxes, Loader2 } from 'lucide-react';
+import { AlertCircle, Info } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field } from '@/components/form-field';
 import { getErrorMessage } from '@/lib/api-client';
+import { AuthCard } from './AuthCard';
 
 const schema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -44,49 +45,42 @@ export function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 flex flex-col items-center gap-2">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Boxes className="h-6 w-6" />
+    <AuthCard title="StockFlow" subtitle="Sign in to manage your business">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {serverError && (
+          <div role="alert" className="flex items-start gap-2 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            {serverError}
           </div>
-          <h1 className="text-lg font-semibold">StockFlow Inventory</h1>
-          <p className="text-sm text-muted-foreground">Sign in to manage your business</p>
+        )}
+
+        <Field label="Email" error={errors.email?.message} required>
+          <Input type="email" autoComplete="email" placeholder="you@company.com" {...register('email')} />
+        </Field>
+
+        <Field label="Password" error={errors.password?.message} required>
+          <Input type="password" autoComplete="current-password" placeholder="••••••••" {...register('password')} />
+        </Field>
+
+        <div className="flex items-center justify-end">
+          <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+            Forgot password?
+          </Link>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm">
-          {serverError && (
-            <div role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {serverError}
-            </div>
-          )}
+        <Button type="submit" className="w-full" loading={isSubmitting}>
+          Sign in
+        </Button>
+      </form>
 
-          <Field label="Email" error={errors.email?.message} required>
-            <Input type="email" autoComplete="email" placeholder="you@company.com" {...register('email')} />
-          </Field>
-
-          <Field label="Password" error={errors.password?.message} required>
-            <Input type="password" autoComplete="current-password" placeholder="••••••••" {...register('password')} />
-          </Field>
-
-          <div className="flex items-center justify-end">
-            <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-              Forgot password?
-            </Link>
-          </div>
-
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-            Sign in
-          </Button>
-        </form>
-
-        <div className="mt-6 rounded-lg border border-dashed border-border p-4 text-xs text-muted-foreground">
+      <div className="mt-6 flex gap-2 rounded-lg border border-dashed border-border p-3 text-xs text-muted-foreground">
+        <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+        <div>
           <p className="mb-1 font-medium text-foreground">Demo credentials</p>
           <p>Super Admin: admin@inventory.local / Admin@12345</p>
           <p>Sales Staff: sales@inventory.local / Sales@12345</p>
         </div>
       </div>
-    </div>
+    </AuthCard>
   );
 }

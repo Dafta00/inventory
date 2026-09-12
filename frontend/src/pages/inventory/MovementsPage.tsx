@@ -102,8 +102,8 @@ export function MovementsPage() {
                     <TableCell>
                       <Badge variant={TYPE_TONE[m.type] ?? 'default'}>{m.type}</Badge>
                     </TableCell>
-                    <TableCell>{formatNumber(m.quantity)}</TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="tabular-nums font-medium">{formatNumber(m.quantity)}</TableCell>
+                    <TableCell className="tabular-nums text-muted-foreground">
                       {m.previousQuantity} → {m.newQuantity}
                     </TableCell>
                     <TableCell className="text-muted-foreground">{m.reference ?? m.reason ?? '-'}</TableCell>

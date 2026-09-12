@@ -84,17 +84,17 @@ export function SaleDetailPage() {
               {sale.items.map((item: any) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.product.name}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
-                  <TableCell>{formatCurrency(item.unitPrice)}</TableCell>
-                  <TableCell>{formatCurrency(item.discount)}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(item.lineTotal)}</TableCell>
+                  <TableCell className="tabular-nums">{item.quantity}</TableCell>
+                  <TableCell className="tabular-nums">{formatCurrency(item.unitPrice)}</TableCell>
+                  <TableCell className="tabular-nums">{formatCurrency(item.discount)}</TableCell>
+                  <TableCell className="text-right tabular-nums font-medium">{formatCurrency(item.lineTotal)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
 
           <div className="mt-6 flex justify-end">
-            <div className="w-56 space-y-1.5 text-sm">
+            <div className="w-56 space-y-1.5 text-sm tabular-nums">
               <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{formatCurrency(sale.subtotal)}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Discount</span><span>-{formatCurrency(sale.discountTotal)}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Tax</span><span>{formatCurrency(sale.taxTotal)}</span></div>

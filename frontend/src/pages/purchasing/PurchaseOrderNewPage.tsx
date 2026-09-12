@@ -153,9 +153,9 @@ export function PurchaseOrderNewPage() {
                       <TableCell><Input type="number" step="0.01" className="w-24" {...register(`items.${index}.unitCost`)} /></TableCell>
                       <TableCell><Input type="number" step="0.01" className="w-20" {...register(`items.${index}.taxRate`)} /></TableCell>
                       <TableCell><Input type="number" step="0.01" className="w-24" {...register(`items.${index}.discount`)} /></TableCell>
-                      <TableCell className="font-medium">{formatCurrency(lineTotal)}</TableCell>
+                      <TableCell className="tabular-nums font-medium">{formatCurrency(lineTotal)}</TableCell>
                       <TableCell>
-                        <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length === 1}>
+                        <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length === 1} aria-label="Remove item">
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </TableCell>
@@ -178,7 +178,7 @@ export function PurchaseOrderNewPage() {
             <div className="mt-4 flex justify-end border-t border-border pt-4">
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Estimated total</p>
-                <p className="text-xl font-semibold">{formatCurrency(total)}</p>
+                <p className="tabular-nums text-xl font-semibold">{formatCurrency(total)}</p>
               </div>
             </div>
           </CardContent>

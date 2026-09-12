@@ -23,6 +23,7 @@ import { useToast } from '@/contexts/ToastContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { PERMISSIONS } from '@/lib/permissions';
 import { getErrorMessage } from '@/lib/api-client';
+import { formatCurrency } from '@/lib/utils';
 import type { Customer } from '@/api/types';
 
 const schema = z.object({
@@ -120,7 +121,12 @@ export function CustomersPage() {
         {isLoading ? (
           <div className="space-y-2 p-4">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-10" />)}</div>
         ) : !data?.items.length ? (
-          <EmptyState icon={Users2} title="No customers yet" />
+          <EmptyState
+            icon={Users2}
+            title="No customers yet"
+            description="Add a customer to start tracking their purchase history, credit limit, and outstanding balance."
+            action={canManage && <Button size="sm" onClick={openCreate}><Plus className="h-4 w-4" /> New customer</Button>}
+          />
         ) : (
           <>
             <Table>
@@ -140,7 +146,7 @@ export function CustomersPage() {
                     <TableCell className="font-medium">{c.name}</TableCell>
                     <TableCell><Badge variant="outline">{c.type}</Badge></TableCell>
                     <TableCell className="text-muted-foreground">{c.phone ?? c.email ?? '-'}</TableCell>
-                    <TableCell>{Number(c.creditLimit) > 0 ? `$${c.creditLimit}` : '-'}</TableCell>
+                    <TableCell className="tabular-nums">{Number(c.creditLimit) > 0 ? formatCurrency(c.creditLimit) : '-'}</TableCell>
                     <TableCell><Badge variant={c.status === 'ACTIVE' ? 'success' : 'secondary'}>{c.status}</Badge></TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">

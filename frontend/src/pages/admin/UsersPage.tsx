@@ -128,7 +128,7 @@ export function UsersPage() {
         {isLoading ? (
           <div className="space-y-2 p-4">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-10" />)}</div>
         ) : !data?.items.length ? (
-          <EmptyState icon={UserCog} title="No users found" />
+          <EmptyState icon={UserCog} title="No users found" description={search ? 'Try a different search term.' : 'Create a user to give staff access to StockFlow.'} />
         ) : (
           <>
             <Table>
@@ -156,7 +156,7 @@ export function UsersPage() {
                         <Button variant="ghost" size="icon" onClick={() => setResetOpen(u)} aria-label="Reset password"><KeyRound className="h-4 w-4" /></Button>
                         <Button
                           variant="ghost" size="icon" aria-label="Deactivate" disabled={u.id === currentUser?.id}
-                          onClick={() => confirm({ title: 'Deactivate user?', destructive: true, onConfirm: () => removeMutation.mutate(u.id) })}
+                          onClick={() => confirm({ title: 'Deactivate user?', description: `${u.name} will immediately lose access, even with an active session.`, destructive: true, onConfirm: () => removeMutation.mutate(u.id) })}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>

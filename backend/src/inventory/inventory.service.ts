@@ -241,7 +241,7 @@ export class InventoryService {
 
   async lowStockSummary() {
     const inventory = await this.prisma.inventory.findMany({
-      include: { product: true },
+      include: { product: true, warehouse: true },
     });
     const active = inventory.filter((i) => i.product.status === 'ACTIVE');
     const lowStock = active.filter((i) => i.quantity > 0 && i.quantity <= i.product.reorderLevel);

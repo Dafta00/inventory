@@ -7,7 +7,7 @@ import { suppliersApi } from '@/api/suppliers';
 import { warehousesApi } from '@/api/warehouses';
 import { productsApi } from '@/api/products';
 import { purchasesApi } from '@/api/purchasing';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Field } from '@/components/form-field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -71,7 +71,10 @@ export function QuickPurchaseDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent size="lg">
-        <DialogHeader><DialogTitle>Record a direct purchase</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Record a direct purchase</DialogTitle>
+          <DialogDescription>For stock received without a formal purchase order — added to inventory immediately.</DialogDescription>
+        </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Supplier" error={errors.supplierId?.message} required>
@@ -88,7 +91,8 @@ export function QuickPurchaseDialog({
             </Field>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 rounded-md border border-border p-3">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Items</p>
             {fields.map((field, index) => (
               <div key={field.id} className="flex items-end gap-2">
                 <div className="flex-1">
@@ -99,7 +103,7 @@ export function QuickPurchaseDialog({
                 </div>
                 <Input type="number" min={1} placeholder="Qty" className="w-24" {...register(`items.${index}.quantity`)} />
                 <Input type="number" step="0.01" placeholder="Unit cost" className="w-28" {...register(`items.${index}.unitCost`)} />
-                <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length === 1}>
+                <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length === 1} aria-label="Remove item">
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
               </div>

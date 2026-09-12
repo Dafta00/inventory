@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { EmptyState } from '@/components/ui/empty-state';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Pagination } from '@/components/ui/pagination';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Field } from '@/components/form-field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -104,14 +104,18 @@ export function PurchaseReturnsPage() {
         {isLoading ? (
           <div className="space-y-2 p-4">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-10" />)}</div>
         ) : !data?.items.length ? (
-          <EmptyState icon={Undo2} title="No purchase returns yet" />
+          <EmptyState
+            icon={Undo2}
+            title="No purchase returns yet"
+            description="Return damaged, defective, or incorrect items back to a supplier — stock is deducted and a refund total is recorded."
+          />
         ) : (
           <>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Return #</TableHead>
-                  <TableHead>Purchase</TableHead>
+                  <TableHead>Original purchase</TableHead>
                   <TableHead>Supplier</TableHead>
                   <TableHead>Refund total</TableHead>
                   <TableHead>Date</TableHead>
@@ -123,7 +127,7 @@ export function PurchaseReturnsPage() {
                     <TableCell className="font-mono text-xs">{r.returnNumber}</TableCell>
                     <TableCell className="text-muted-foreground">{r.purchase.invoiceNumber}</TableCell>
                     <TableCell className="font-medium">{r.supplier.name}</TableCell>
-                    <TableCell>{formatCurrency(r.refundTotal)}</TableCell>
+                    <TableCell className="tabular-nums font-medium">{formatCurrency(r.refundTotal)}</TableCell>
                     <TableCell className="text-muted-foreground">{formatDate(r.createdAt)}</TableCell>
                   </TableRow>
                 ))}
@@ -136,7 +140,10 @@ export function PurchaseReturnsPage() {
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent size="lg">
-          <DialogHeader><DialogTitle>New purchase return</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>New purchase return</DialogTitle>
+            <DialogDescription>Checked items are deducted from warehouse stock and refunded at their original unit cost.</DialogDescription>
+          </DialogHeader>
           <div className="space-y-4">
             <Field label="Purchase" required>
               <Select value={purchaseId} onValueChange={setPurchaseId}>
@@ -150,7 +157,12 @@ export function PurchaseReturnsPage() {
             </Field>
 
             {purchase && (
-              <Table>
+              <div className="rounded-md border border-border">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-muted/40 px-3 py-2 text-sm">
+                  <span className="font-medium">{purchase.supplier.name}</span>
+                  <span className="text-muted-foreground">{purchase.warehouse.name} · {formatDate(purchase.createdAt)}</span>
+                </div>
+                <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-8" />
@@ -172,7 +184,7 @@ export function PurchaseReturnsPage() {
                         />
                       </TableCell>
                       <TableCell className="font-medium">{item.product.name}</TableCell>
-                      <TableCell>{item.quantity}</TableCell>
+                      <TableCell className="tabular-nums">{item.quantity}</TableCell>
                       <TableCell>
                         <Input
                           type="number"
@@ -204,7 +216,8 @@ export function PurchaseReturnsPage() {
                     </TableRow>
                   ))}
                 </TableBody>
-              </Table>
+                </Table>
+              </div>
             )}
 
             <Field label="Notes"><Textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} /></Field>

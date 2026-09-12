@@ -101,6 +101,23 @@ export interface InventoryRow {
   isOutOfStock: boolean;
 }
 
+export interface StockAlertItem {
+  id: string;
+  productId: string;
+  warehouseId: string;
+  quantity: number;
+  reserved: number;
+  product: { id: string; name: string; sku: string; unit: string; reorderLevel: number };
+  warehouse: { id: string; name: string; code: string };
+}
+
+export interface StockAlertsResponse {
+  lowStockCount: number;
+  outOfStockCount: number;
+  lowStockItems: StockAlertItem[];
+  outOfStockItems: StockAlertItem[];
+}
+
 export interface StockMovement {
   id: string;
   productId: string;

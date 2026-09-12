@@ -61,7 +61,7 @@ export function SalesPage() {
                     <TableCell className="font-medium">{s.customer?.name ?? 'Walk-in'}</TableCell>
                     <TableCell className="text-muted-foreground">{s.warehouse.name}</TableCell>
                     <TableCell className="text-muted-foreground">{s.staff.name}</TableCell>
-                    <TableCell>{formatCurrency(s.total)}</TableCell>
+                    <TableCell className="tabular-nums font-medium">{formatCurrency(s.total)}</TableCell>
                     <TableCell><Badge variant={s.paymentStatus === 'PAID' ? 'success' : 'warning'}>{s.paymentStatus}</Badge></TableCell>
                     <TableCell className="text-muted-foreground">{formatDateTime(s.createdAt)}</TableCell>
                     <TableCell className="text-right">
