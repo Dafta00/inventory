@@ -28,7 +28,7 @@ export function StatCard({
             'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg',
             tone === 'default' && 'bg-primary/10 text-primary',
             tone === 'success' && 'bg-success/10 text-success',
-            tone === 'warning' && 'bg-warning/15 text-warning-foreground',
+            tone === 'warning' && 'bg-warning/10 text-warning',
             tone === 'destructive' && 'bg-destructive/10 text-destructive',
           )}
         >
