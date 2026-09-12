@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Pagination } from '@/components/ui/pagination';
@@ -101,7 +102,12 @@ export function ExpensesPage() {
         {isLoading ? (
           <div className="space-y-2 p-4">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-10" />)}</div>
         ) : !data?.items.length ? (
-          <EmptyState icon={Wallet} title="No expenses recorded yet" />
+          <EmptyState
+            icon={Wallet}
+            title="No expenses recorded yet"
+            description="Operating costs you log here feed directly into the Profit & Loss report."
+            action={canManage ? <Button size="sm" onClick={openCreate}><Plus className="h-4 w-4" /> New expense</Button> : undefined}
+          />
         ) : (
           <>
             <Table>
@@ -109,7 +115,7 @@ export function ExpensesPage() {
                 <TableRow>
                   <TableHead>Category</TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Amount</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
                   <TableHead>Date</TableHead>
                   {canManage && <TableHead className="text-right">Actions</TableHead>}
                 </TableRow>
@@ -117,9 +123,11 @@ export function ExpensesPage() {
               <TableBody>
                 {data.items.map((e) => (
                   <TableRow key={e.id}>
-                    <TableCell className="font-medium">{e.category}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{e.category}</Badge>
+                    </TableCell>
                     <TableCell className="text-muted-foreground">{e.description}</TableCell>
-                    <TableCell>{formatCurrency(e.amount)}</TableCell>
+                    <TableCell className="text-right font-medium tabular-nums">{formatCurrency(e.amount)}</TableCell>
                     <TableCell className="text-muted-foreground">{formatDate(e.date)}</TableCell>
                     {canManage && (
                       <TableCell className="text-right">
@@ -146,7 +154,7 @@ export function ExpensesPage() {
       </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
+        <DialogContent size="sm">
           <DialogHeader><DialogTitle>{editing ? 'Edit expense' : 'New expense'}</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <Field label="Category" error={errors.category?.message} required>

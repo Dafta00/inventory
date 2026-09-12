@@ -45,7 +45,7 @@ export function CustomerDetailPage() {
             <div><p className="text-muted-foreground">Phone</p><p>{data.phone ?? '-'}</p></div>
             <div><p className="text-muted-foreground">Email</p><p>{data.email ?? '-'}</p></div>
             <div><p className="text-muted-foreground">Type</p><p><Badge variant="outline">{data.type}</Badge></p></div>
-            <div><p className="text-muted-foreground">Credit limit</p><p>{formatCurrency(data.creditLimit)}</p></div>
+            <div><p className="text-muted-foreground">Credit limit</p><p className="tabular-nums">{formatCurrency(data.creditLimit)}</p></div>
             <div className="col-span-2"><p className="text-muted-foreground">Address</p><p>{data.address ?? '-'}</p></div>
           </CardContent>
         </Card>
@@ -66,15 +66,17 @@ export function CustomerDetailPage() {
                 {data.recentSales.map((s: any) => (
                   <TableRow key={s.id}>
                     <TableCell className="font-mono text-xs">{s.invoiceNumber}</TableCell>
-                    <TableCell>{formatDate(s.createdAt)}</TableCell>
-                    <TableCell>{formatCurrency(s.total)}</TableCell>
-                    <TableCell><Badge variant="outline">{s.paymentStatus}</Badge></TableCell>
+                    <TableCell className="text-muted-foreground">{formatDate(s.createdAt)}</TableCell>
+                    <TableCell className="tabular-nums">{formatCurrency(s.total)}</TableCell>
+                    <TableCell><Badge variant={s.paymentStatus === 'PAID' ? 'success' : 'warning'}>{s.paymentStatus}</Badge></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           ) : (
-            <CardContent><EmptyState title="No sales yet" /></CardContent>
+            <CardContent>
+              <EmptyState title="No sales yet" description="Sales for this customer will show up here once recorded." />
+            </CardContent>
           )}
         </Card>
       </div>

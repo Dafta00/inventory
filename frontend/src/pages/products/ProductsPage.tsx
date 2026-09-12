@@ -213,10 +213,10 @@ export function ProductsPage() {
                     <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell className="text-muted-foreground">{product.category?.name ?? '-'}</TableCell>
                     <TableCell className="text-muted-foreground">{product.brand?.name ?? '-'}</TableCell>
-                    <TableCell>{formatCurrency(product.costPrice)}</TableCell>
-                    <TableCell>{formatCurrency(product.sellingPrice)}</TableCell>
+                    <TableCell className="tabular-nums">{formatCurrency(product.costPrice)}</TableCell>
+                    <TableCell className="tabular-nums font-medium">{formatCurrency(product.sellingPrice)}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 tabular-nums">
                         {formatNumber(product.totalStock ?? 0)}
                         {product.isOutOfStock && <Badge variant="destructive">Out</Badge>}
                         {!product.isOutOfStock && product.isLowStock && <Badge variant="warning">Low</Badge>}

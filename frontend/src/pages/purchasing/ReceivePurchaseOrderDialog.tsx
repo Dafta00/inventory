@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { PackageCheck } from 'lucide-react';
 import { purchaseOrdersApi } from '@/api/purchasing';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/contexts/ToastContext';
 import { getErrorMessage } from '@/lib/api-client';
@@ -62,6 +64,7 @@ export function ReceivePurchaseOrderDialog({
       <DialogContent size="lg">
         <DialogHeader>
           <DialogTitle>Receive items for {purchaseOrder.poNumber}</DialogTitle>
+          <DialogDescription>Confirmed quantities are added to warehouse stock immediately.</DialogDescription>
         </DialogHeader>
         <Table>
           <TableHeader>
@@ -78,23 +81,28 @@ export function ReceivePurchaseOrderDialog({
               return (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.product.name}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
-                  <TableCell>{item.receivedQty}</TableCell>
+                  <TableCell className="tabular-nums">{item.quantity}</TableCell>
+                  <TableCell className="tabular-nums">{item.receivedQty}</TableCell>
                   <TableCell>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={remaining}
-                      disabled={remaining <= 0}
-                      className="w-24"
-                      value={quantities[item.productId] ?? 0}
-                      onChange={(e) =>
-                        setQuantities((prev) => ({
-                          ...prev,
-                          [item.productId]: Math.min(remaining, Math.max(0, parseInt(e.target.value, 10) || 0)),
-                        }))
-                      }
-                    />
+                    {remaining <= 0 ? (
+                      <Badge variant="success">
+                        <PackageCheck className="h-3 w-3" /> Complete
+                      </Badge>
+                    ) : (
+                      <Input
+                        type="number"
+                        min={0}
+                        max={remaining}
+                        className="w-24"
+                        value={quantities[item.productId] ?? 0}
+                        onChange={(e) =>
+                          setQuantities((prev) => ({
+                            ...prev,
+                            [item.productId]: Math.min(remaining, Math.max(0, parseInt(e.target.value, 10) || 0)),
+                          }))
+                        }
+                      />
+                    )}
                   </TableCell>
                 </TableRow>
               );

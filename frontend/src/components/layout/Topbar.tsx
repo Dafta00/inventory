@@ -29,8 +29,12 @@ export function Topbar({ onOpenMobile }: { onOpenMobile: () => void }) {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background/95 px-4 backdrop-blur">
-      <button className="lg:hidden" onClick={onOpenMobile} aria-label="Open menu">
+    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background/95 px-4 backdrop-blur sm:px-6">
+      <button
+        className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground lg:hidden"
+        onClick={onOpenMobile}
+        aria-label="Open menu"
+      >
         <Menu className="h-5 w-5" />
       </button>
 
@@ -38,13 +42,13 @@ export function Topbar({ onOpenMobile }: { onOpenMobile: () => void }) {
 
       <div className="ml-auto flex items-center gap-3">
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <DropdownMenuTrigger className="flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <Avatar className="h-7 w-7">
-              <AvatarFallback className="bg-primary/10 text-primary text-xs">{initials}</AvatarFallback>
+              <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{initials}</AvatarFallback>
             </Avatar>
             <div className="hidden text-left sm:block">
               <p className="text-sm font-medium leading-none">{user?.name}</p>
-              <p className="text-xs text-muted-foreground">{user?.role}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">{user?.role}</p>
             </div>
             <ChevronDown className="h-4 w-4 text-muted-foreground" />
           </DropdownMenuTrigger>

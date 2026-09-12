@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { KeyRound } from 'lucide-react';
 import { apiClient, getErrorMessage } from '@/lib/api-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,7 +48,11 @@ export function ChangePasswordPage() {
     <div className="mx-auto max-w-md">
       <PageHeader title="Change password" description="Update the password for your account" />
       <Card>
-        <CardContent className="pt-5">
+        <CardContent className="space-y-4 pt-5">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <KeyRound className="h-4 w-4" />
+            You'll stay signed in after changing your password.
+          </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <Field label="Current password" error={errors.currentPassword?.message} required>
               <Input type="password" {...register('currentPassword')} />
@@ -58,7 +63,7 @@ export function ChangePasswordPage() {
             <Field label="Confirm new password" error={errors.confirmPassword?.message} required>
               <Input type="password" {...register('confirmPassword')} />
             </Field>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" loading={isSubmitting}>
               Update password
             </Button>
           </form>

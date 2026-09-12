@@ -121,7 +121,12 @@ export function SuppliersPage() {
         {isLoading ? (
           <div className="space-y-2 p-4">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-10" />)}</div>
         ) : !data?.items.length ? (
-          <EmptyState icon={Truck} title="No suppliers yet" />
+          <EmptyState
+            icon={Truck}
+            title="No suppliers yet"
+            description="Add a supplier to start creating purchase orders and tracking deliveries."
+            action={canManage && <Button onClick={openCreate}><Plus className="h-4 w-4" /> New supplier</Button>}
+          />
         ) : (
           <>
             <Table>

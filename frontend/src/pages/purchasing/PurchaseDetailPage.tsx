@@ -49,9 +49,9 @@ export function PurchaseDetailPage() {
               {purchase.items.map((item: any) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.product.name}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
-                  <TableCell>{formatCurrency(item.unitCost)}</TableCell>
-                  <TableCell>{formatCurrency(item.lineTotal)}</TableCell>
+                  <TableCell className="tabular-nums">{item.quantity}</TableCell>
+                  <TableCell className="tabular-nums">{formatCurrency(item.unitCost)}</TableCell>
+                  <TableCell className="tabular-nums font-medium">{formatCurrency(item.lineTotal)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -61,10 +61,10 @@ export function PurchaseDetailPage() {
         <Card>
           <CardHeader><CardTitle>Summary</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{formatCurrency(purchase.subtotal)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Discount</span><span>-{formatCurrency(purchase.discountTotal)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Tax</span><span>{formatCurrency(purchase.taxTotal)}</span></div>
-            <div className="flex justify-between border-t border-border pt-2 font-semibold"><span>Total</span><span>{formatCurrency(purchase.total)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span className="tabular-nums">{formatCurrency(purchase.subtotal)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Discount</span><span className="tabular-nums">-{formatCurrency(purchase.discountTotal)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Tax</span><span className="tabular-nums">{formatCurrency(purchase.taxTotal)}</span></div>
+            <div className="flex justify-between border-t border-border pt-2 font-semibold"><span>Total</span><span className="tabular-nums">{formatCurrency(purchase.total)}</span></div>
             <div className="flex justify-between pt-2"><span className="text-muted-foreground">Received by</span><span>{purchase.receivedBy?.name}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Date</span><span>{formatDate(purchase.createdAt)}</span></div>
           </CardContent>

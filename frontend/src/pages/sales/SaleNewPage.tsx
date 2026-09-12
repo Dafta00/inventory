@@ -111,6 +111,12 @@ export function SaleNewPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Card>
           <CardContent className="grid grid-cols-1 gap-4 pt-5 sm:grid-cols-3">
+            <Field label="Warehouse" error={errors.warehouseId?.message} required hint="Determines available stock below">
+              <Select onValueChange={(v) => setValue('warehouseId', v)}>
+                <SelectTrigger><SelectValue placeholder="Select warehouse" /></SelectTrigger>
+                <SelectContent>{warehouses?.map((w) => <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>)}</SelectContent>
+              </Select>
+            </Field>
             <Field label="Customer">
               <Select onValueChange={(v) => setValue('customerId', v)}>
                 <SelectTrigger><SelectValue placeholder="Walk-in customer" /></SelectTrigger>
@@ -118,12 +124,6 @@ export function SaleNewPage() {
                   <SelectItem value={NONE}>Walk-in customer</SelectItem>
                   {customers?.items.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                 </SelectContent>
-              </Select>
-            </Field>
-            <Field label="Warehouse" error={errors.warehouseId?.message} required>
-              <Select onValueChange={(v) => setValue('warehouseId', v)}>
-                <SelectTrigger><SelectValue placeholder="Select warehouse" /></SelectTrigger>
-                <SelectContent>{warehouses?.map((w) => <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>)}</SelectContent>
               </Select>
             </Field>
             <Field label="Payment method">
@@ -144,6 +144,9 @@ export function SaleNewPage() {
         <Card>
           <CardContent className="pt-5">
             {errors.items?.message && <p className="mb-2 text-sm text-destructive">{errors.items.message}</p>}
+            {!warehouseId && (
+              <p className="mb-3 rounded-md bg-info/10 px-3 py-2 text-sm text-info">Select a warehouse above to see accurate stock levels for each product.</p>
+            )}
             <Table>
               <TableHeader>
                 <TableRow>
@@ -181,7 +184,7 @@ export function SaleNewPage() {
                       <TableCell><Input type="number" step="0.01" className="w-24" {...register(`items.${index}.unitPrice`)} /></TableCell>
                       <TableCell><Input type="number" step="0.01" className="w-20" {...register(`items.${index}.taxRate`)} /></TableCell>
                       <TableCell><Input type="number" step="0.01" className="w-24" {...register(`items.${index}.discount`)} /></TableCell>
-                      <TableCell className="font-medium">{formatCurrency(lineTotal)}</TableCell>
+                      <TableCell className="font-medium tabular-nums">{formatCurrency(lineTotal)}</TableCell>
                       <TableCell>
                         <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length === 1}>
                           <Trash2 className="h-4 w-4 text-destructive" />
@@ -199,22 +202,25 @@ export function SaleNewPage() {
             >
               <Plus className="h-4 w-4" /> Add item
             </Button>
-
-            <div className="mt-4 flex justify-end border-t border-border pt-4">
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Total</p>
-                <p className="text-xl font-semibold">{formatCurrency(total)}</p>
-              </div>
-            </div>
           </CardContent>
         </Card>
 
         <Card><CardContent className="pt-5"><Field label="Notes"><Textarea rows={2} {...register('notes')} /></Field></CardContent></Card>
 
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={() => navigate('/sales')}>Cancel</Button>
-          <Button type="submit" loading={isSubmitting}>Complete sale</Button>
-        </div>
+        <Card className="border-primary/20 bg-primary/[0.03]">
+          <CardContent className="flex flex-col items-stretch gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Total · {items.length} item{items.length === 1 ? '' : 's'}
+              </p>
+              <p className="mt-1 text-3xl font-bold tabular-nums tracking-tight">{formatCurrency(total)}</p>
+            </div>
+            <div className="flex gap-2 sm:shrink-0">
+              <Button type="button" variant="outline" onClick={() => navigate('/sales')}>Cancel</Button>
+              <Button type="submit" size="lg" loading={isSubmitting}>Complete sale</Button>
+            </div>
+          </CardContent>
+        </Card>
       </form>
     </div>
   );

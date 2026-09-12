@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, PackageCheck } from 'lucide-react';
+import { ArrowLeft, PackageCheck, Eye } from 'lucide-react';
 import { purchaseOrdersApi } from '@/api/purchasing';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ import { getErrorMessage } from '@/lib/api-client';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { invalidateInventoryRelated } from '@/lib/query-invalidation';
 import { ReceivePurchaseOrderDialog } from './ReceivePurchaseOrderDialog';
+import { PurchaseOrderStatusStepper } from './PurchaseOrderStatusStepper';
 
 const STATUS_TONE: Record<string, 'default' | 'success' | 'warning' | 'destructive' | 'secondary'> = {
   DRAFT: 'secondary', SENT: 'default', CONFIRMED: 'default',
@@ -76,6 +77,14 @@ export function PurchaseOrderDetailPage() {
         }
       />
 
+      {po.status !== 'DRAFT' && (
+        <Card className="mb-4">
+          <CardContent className="py-5">
+            <PurchaseOrderStatusStepper status={po.status} />
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader><CardTitle>Line items</CardTitle></CardHeader>
@@ -92,12 +101,16 @@ export function PurchaseOrderDetailPage() {
               {po.items.map((item: any) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.product.name}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
+                  <TableCell className="tabular-nums">{item.quantity}</TableCell>
                   <TableCell>
-                    {item.receivedQty} / {item.quantity}
-                    {item.receivedQty >= item.quantity && <Badge variant="success" className="ml-2">Complete</Badge>}
+                    <span className="tabular-nums">{item.receivedQty} / {item.quantity}</span>
+                    {item.receivedQty >= item.quantity ? (
+                      <Badge variant="success" className="ml-2">Complete</Badge>
+                    ) : item.receivedQty > 0 ? (
+                      <Badge variant="warning" className="ml-2">Partial</Badge>
+                    ) : null}
                   </TableCell>
-                  <TableCell>{formatCurrency(item.unitCost)}</TableCell>
+                  <TableCell className="tabular-nums">{formatCurrency(item.unitCost)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -107,10 +120,10 @@ export function PurchaseOrderDetailPage() {
         <Card>
           <CardHeader><CardTitle>Summary</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{formatCurrency(po.subtotal)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Discount</span><span>-{formatCurrency(po.discountTotal)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Tax</span><span>{formatCurrency(po.taxTotal)}</span></div>
-            <div className="flex justify-between border-t border-border pt-2 font-semibold"><span>Total</span><span>{formatCurrency(po.total)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span className="tabular-nums">{formatCurrency(po.subtotal)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Discount</span><span className="tabular-nums">-{formatCurrency(po.discountTotal)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Tax</span><span className="tabular-nums">{formatCurrency(po.taxTotal)}</span></div>
+            <div className="flex justify-between border-t border-border pt-2 font-semibold"><span>Total</span><span className="tabular-nums">{formatCurrency(po.total)}</span></div>
             <div className="flex justify-between pt-2"><span className="text-muted-foreground">Expected date</span><span>{po.expectedDate ? formatDate(po.expectedDate) : '-'}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Created</span><span>{formatDate(po.createdAt)}</span></div>
           </CardContent>
@@ -122,16 +135,19 @@ export function PurchaseOrderDetailPage() {
           <CardHeader><CardTitle>Receiving history</CardTitle></CardHeader>
           <Table>
             <TableHeader>
-              <TableRow><TableHead>Invoice</TableHead><TableHead>Date</TableHead><TableHead>Total</TableHead></TableRow>
+              <TableRow><TableHead>Invoice</TableHead><TableHead>Date</TableHead><TableHead>Total</TableHead><TableHead className="text-right">Actions</TableHead></TableRow>
             </TableHeader>
             <TableBody>
               {po.purchases.map((p: any) => (
                 <TableRow key={p.id}>
-                  <TableCell className="font-mono text-xs cursor-pointer text-primary" onClick={() => navigate(`/purchases/${p.id}`)}>
-                    {p.invoiceNumber}
-                  </TableCell>
+                  <TableCell className="font-mono text-xs">{p.invoiceNumber}</TableCell>
                   <TableCell>{formatDate(p.createdAt)}</TableCell>
-                  <TableCell>{formatCurrency(p.total)}</TableCell>
+                  <TableCell className="tabular-nums">{formatCurrency(p.total)}</TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="ghost" size="icon" onClick={() => navigate(`/purchases/${p.id}`)} aria-label="View purchase">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -46,7 +46,11 @@ export function PurchasesPage() {
         {isLoading ? (
           <div className="space-y-2 p-4">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-10" />)}</div>
         ) : !data?.items.length ? (
-          <EmptyState icon={ShoppingCart} title="No purchases recorded yet" />
+          <EmptyState
+            icon={ShoppingCart}
+            title="No purchases recorded yet"
+            description="Purchases appear here once a purchase order is received or a direct restock is recorded."
+          />
         ) : (
           <>
             <Table>
@@ -68,8 +72,8 @@ export function PurchasesPage() {
                     <TableCell className="font-mono text-xs">{p.invoiceNumber}</TableCell>
                     <TableCell className="font-medium">{p.supplier.name}</TableCell>
                     <TableCell className="text-muted-foreground">{p.warehouse.name}</TableCell>
-                    <TableCell>{p.items.length}</TableCell>
-                    <TableCell>{formatCurrency(p.total)}</TableCell>
+                    <TableCell className="tabular-nums text-muted-foreground">{p.items.length}</TableCell>
+                    <TableCell className="tabular-nums font-medium">{formatCurrency(p.total)}</TableCell>
                     <TableCell className="text-muted-foreground">{p.receivedBy?.name}</TableCell>
                     <TableCell className="text-muted-foreground">{formatDate(p.createdAt)}</TableCell>
                     <TableCell className="text-right">

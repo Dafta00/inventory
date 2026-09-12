@@ -137,101 +137,119 @@ export function ProductFormDialog({
         <DialogHeader>
           <DialogTitle>{product ? 'Edit product' : 'New product'}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 max-h-[70vh] overflow-y-auto pr-1">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="Product name" error={errors.name?.message} required className="sm:col-span-2">
-              <Input {...register('name')} />
-            </Field>
-            <Field label="SKU" error={errors.sku?.message} hint={product ? undefined : 'Leave blank to auto-generate'}>
-              <Input {...register('sku')} disabled={!!product} />
-            </Field>
-            <Field label="Barcode" error={errors.barcode?.message}>
-              <Input {...register('barcode')} />
-            </Field>
-            <Field label="Description" className="sm:col-span-2">
-              <Textarea rows={2} {...register('description')} />
-            </Field>
+        <form onSubmit={handleSubmit(onSubmit)} className="max-h-[70vh] space-y-6 overflow-y-auto pr-1">
+          <section className="space-y-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Basic information</h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Product name" error={errors.name?.message} required className="sm:col-span-2">
+                <Input {...register('name')} />
+              </Field>
+              <Field label="SKU" error={errors.sku?.message} hint={product ? undefined : 'Leave blank to auto-generate'}>
+                <Input {...register('sku')} disabled={!!product} />
+              </Field>
+              <Field label="Barcode" error={errors.barcode?.message}>
+                <Input {...register('barcode')} />
+              </Field>
+              <Field label="Description" className="sm:col-span-2">
+                <Textarea rows={2} {...register('description')} />
+              </Field>
+            </div>
+          </section>
 
-            <Field label="Category">
-              <Select value={watch('categoryId') ?? NONE} onValueChange={(v) => setValue('categoryId', v === NONE ? undefined : v)}>
-                <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={NONE}>None</SelectItem>
-                  {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field label="Brand">
-              <Select value={watch('brandId') ?? NONE} onValueChange={(v) => setValue('brandId', v === NONE ? undefined : v)}>
-                <SelectTrigger><SelectValue placeholder="Select brand" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={NONE}>None</SelectItem>
-                  {brands.map((b) => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field label="Primary supplier" className="sm:col-span-2">
-              <Select
-                value={watch('primarySupplierId') ?? NONE}
-                onValueChange={(v) => setValue('primarySupplierId', v === NONE ? undefined : v)}
-              >
-                <SelectTrigger><SelectValue placeholder="Select supplier" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={NONE}>None</SelectItem>
-                  {suppliers?.items.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </Field>
+          <section className="space-y-4 border-t border-border pt-5">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Classification</h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Category">
+                <Select value={watch('categoryId') ?? NONE} onValueChange={(v) => setValue('categoryId', v === NONE ? undefined : v)}>
+                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={NONE}>None</SelectItem>
+                    {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label="Brand">
+                <Select value={watch('brandId') ?? NONE} onValueChange={(v) => setValue('brandId', v === NONE ? undefined : v)}>
+                  <SelectTrigger><SelectValue placeholder="Select brand" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={NONE}>None</SelectItem>
+                    {brands.map((b) => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label="Primary supplier" className="sm:col-span-2">
+                <Select
+                  value={watch('primarySupplierId') ?? NONE}
+                  onValueChange={(v) => setValue('primarySupplierId', v === NONE ? undefined : v)}
+                >
+                  <SelectTrigger><SelectValue placeholder="Select supplier" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={NONE}>None</SelectItem>
+                    {suppliers?.items.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
+          </section>
 
-            <Field label="Cost price" error={errors.costPrice?.message} required>
-              <Input type="number" step="0.01" {...register('costPrice')} />
-            </Field>
-            <Field label="Selling price" error={errors.sellingPrice?.message} required>
-              <Input type="number" step="0.01" {...register('sellingPrice')} />
-            </Field>
-            <Field label="Discount" error={errors.discount?.message}>
-              <Input type="number" step="0.01" {...register('discount')} />
-            </Field>
-            <Field label="Tax rate (%)" error={errors.taxRate?.message}>
-              <Input type="number" step="0.01" {...register('taxRate')} />
-            </Field>
+          <section className="space-y-4 border-t border-border pt-5">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Pricing</h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Cost price" error={errors.costPrice?.message} required>
+                <Input type="number" step="0.01" {...register('costPrice')} />
+              </Field>
+              <Field label="Selling price" error={errors.sellingPrice?.message} required>
+                <Input type="number" step="0.01" {...register('sellingPrice')} />
+              </Field>
+              <Field label="Discount" error={errors.discount?.message}>
+                <Input type="number" step="0.01" {...register('discount')} />
+              </Field>
+              <Field label="Tax rate (%)" error={errors.taxRate?.message}>
+                <Input type="number" step="0.01" {...register('taxRate')} />
+              </Field>
+            </div>
+          </section>
 
-            <Field label="Unit">
-              <Input placeholder="pcs, kg, box..." {...register('unit')} />
-            </Field>
-            <Field label="Image URL">
-              <Input {...register('imageUrl')} />
-            </Field>
+          <section className="space-y-4 border-t border-border pt-5">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Inventory</h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Unit">
+                <Input placeholder="pcs, kg, box..." {...register('unit')} />
+              </Field>
+              <Field label="Image URL">
+                <Input {...register('imageUrl')} />
+              </Field>
 
-            <Field label="Minimum stock level" error={errors.minStockLevel?.message}>
-              <Input type="number" {...register('minStockLevel')} />
-            </Field>
-            <Field label="Reorder level" error={errors.reorderLevel?.message} hint="Alerts trigger at or below this">
-              <Input type="number" {...register('reorderLevel')} />
-            </Field>
-            <Field label="Maximum stock level" error={errors.maxStockLevel?.message}>
-              <Input type="number" {...register('maxStockLevel')} />
-            </Field>
+              <Field label="Minimum stock level" error={errors.minStockLevel?.message}>
+                <Input type="number" {...register('minStockLevel')} />
+              </Field>
+              <Field label="Reorder level" error={errors.reorderLevel?.message} hint="Alerts trigger at or below this">
+                <Input type="number" {...register('reorderLevel')} />
+              </Field>
+              <Field label="Maximum stock level" error={errors.maxStockLevel?.message}>
+                <Input type="number" {...register('maxStockLevel')} />
+              </Field>
 
-            {!product && (
-              <>
-                <Field label="Initial stock warehouse">
-                  <Select value={watch('warehouseId') ?? NONE} onValueChange={(v) => setValue('warehouseId', v === NONE ? undefined : v)}>
-                    <SelectTrigger><SelectValue placeholder="Optional" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={NONE}>None</SelectItem>
-                      {warehouses?.map((w) => <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field label="Initial quantity">
-                  <Input type="number" {...register('initialQuantity')} />
-                </Field>
-              </>
-            )}
-          </div>
+              {!product && (
+                <>
+                  <Field label="Initial stock warehouse">
+                    <Select value={watch('warehouseId') ?? NONE} onValueChange={(v) => setValue('warehouseId', v === NONE ? undefined : v)}>
+                      <SelectTrigger><SelectValue placeholder="Optional" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value={NONE}>None</SelectItem>
+                        {warehouses?.map((w) => <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                  <Field label="Initial quantity">
+                    <Input type="number" {...register('initialQuantity')} />
+                  </Field>
+                </>
+              )}
+            </div>
+          </section>
 
-          <DialogFooter>
+          <DialogFooter className="border-t border-border pt-5">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>

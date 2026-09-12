@@ -67,7 +67,11 @@ export function PurchaseOrdersPage() {
         {isLoading ? (
           <div className="space-y-2 p-4">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-10" />)}</div>
         ) : !data?.items.length ? (
-          <EmptyState icon={ClipboardList} title="No purchase orders yet" />
+          <EmptyState
+            icon={ClipboardList}
+            title="No purchase orders yet"
+            description="Create a purchase order to formally request stock from a supplier and track it through delivery."
+          />
         ) : (
           <>
             <Table>
@@ -89,8 +93,8 @@ export function PurchaseOrdersPage() {
                     <TableCell className="font-mono text-xs">{po.poNumber}</TableCell>
                     <TableCell className="font-medium">{po.supplier.name}</TableCell>
                     <TableCell className="text-muted-foreground">{po.warehouse.name}</TableCell>
-                    <TableCell>{po.items.length}</TableCell>
-                    <TableCell>{formatCurrency(po.total)}</TableCell>
+                    <TableCell className="tabular-nums text-muted-foreground">{po.items.length}</TableCell>
+                    <TableCell className="tabular-nums font-medium">{formatCurrency(po.total)}</TableCell>
                     <TableCell><Badge variant={STATUS_TONE[po.status]}>{po.status.replace(/_/g, ' ')}</Badge></TableCell>
                     <TableCell className="text-muted-foreground">{formatDate(po.createdAt)}</TableCell>
                     <TableCell className="text-right">

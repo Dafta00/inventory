@@ -69,8 +69,8 @@ export function WarehouseDetailPage() {
                     <TableRow key={row.id}>
                       <TableCell className="font-medium">{row.product.name}</TableCell>
                       <TableCell className="font-mono text-xs">{row.product.sku}</TableCell>
-                      <TableCell>{formatNumber(row.quantity)} {row.product.unit}</TableCell>
-                      <TableCell>{formatCurrency(row.quantity * Number(row.product.costPrice))}</TableCell>
+                      <TableCell className="tabular-nums">{formatNumber(row.quantity)} {row.product.unit}</TableCell>
+                      <TableCell className="tabular-nums">{formatCurrency(row.quantity * Number(row.product.costPrice))}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
